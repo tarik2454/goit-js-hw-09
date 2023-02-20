@@ -1,0 +1,52 @@
+.timer__wrapper {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.date-form {
+  width: 150px;
+  text-transform: uppercase;
+  border: 2px solid #2f4f4f;
+  border-radius: 3px;
+  padding: 5px;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.text {
+  font-weight: 700;
+}
+
+.start-btn {
+  text-transform: uppercase;
+  background-color: rgba(0, 0, 0, 0);
+  border: 2px solid #2f4f4f;
+  border-radius: 3px;
+  padding: 5px;
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.timer {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+  color: black;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.value {
+  font-size: 30px;
+}
+
+.label {
+  font-size: 15px;
+}
