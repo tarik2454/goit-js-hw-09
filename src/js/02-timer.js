@@ -4,6 +4,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const startBtn = document.querySelector('[data-start]');
 const input = document.querySelector('#datetime-picker');
+const inputValueList = document.querySelectorAll('span.value');
 const timerHtml = document.querySelector('.timer');
 
 let selectedDate = null;
@@ -25,6 +26,8 @@ const options = {
       startBtn.disabled = true;
       return;
     }
+
+    inputValueList.forEach(value => (value.textContent = '00'));
 
     clearInterval(intervalId);
   },
