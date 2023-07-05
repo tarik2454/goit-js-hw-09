@@ -3,17 +3,11 @@ import 'flatpickr/dist/themes/confetti.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const startBtn = document.querySelector('[data-start]');
-const dataDays = document.querySelector('[data-days]');
-const dataHours = document.querySelector('[data-hours]');
-const dataMinutes = document.querySelector('[data-minutes]');
-const dataSeconds = document.querySelector('[data-seconds]');
 const input = document.querySelector('#datetime-picker');
 const timerHtml = document.querySelector('.timer');
 
-startBtn.addEventListener('click', () => {
-  options.start();
-});
-
+let selectedDate = null;
+let intervalId = null;
 startBtn.disabled = true;
 
 const options = {
@@ -22,51 +16,51 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] < new Date()) {
+    selectedDate = selectedDates[0];
+
+    startBtn.disabled = false;
+
+    if (selectedDate < Date.now()) {
       Notify.failure('Please choose a date in the future');
+      startBtn.disabled = true;
       return;
     }
 
-    startBtn.disabled = false;
+    clearInterval(intervalId);
   },
   start() {
-    this.intervalId = setInterval(() => {
-      const deltaTime = new Date(input.value) - new Date();
-      console.log(deltaTime);
+    intervalId = setInterval(() => {
+      const currentValue = selectedDate - Date.now();
+      console.log(selectedDate);
+      startBtn.disabled = true;
 
-      if (deltaTime >= 0) {
-        const timeObject = convertMs(deltaTime);
-        updateClockFace(timeObject);
-        // Способ обновления текстовых полей .timer без использования функции updateClockFace()
-        // for (const key in timeObject) {
-        //   document.querySelector(`[data-${key}]`).textContent = addLeadingZero(
-        //     timeObject[key]
-        //   );
-        // }
+      if (currentValue >= 0) {
+        const convertDate = convertMs(currentValue);
+        renderDate(convertDate);
       }
-      if (deltaTime <= 300000) {
+      if (currentValue <= 300000 && currentValue >= 0) {
         timerHtml.style.color = 'tomato';
       }
-      if (deltaTime < 1000) {
+      if (currentValue <= 1000 && currentValue >= 0) {
         Notify.success('Countdown finished');
         timerHtml.style.color = 'inherit';
-        clearInterval(this.intervalId);
       }
     }, 1000);
   },
 };
 
-const flatpickrInput = flatpickr('input#datetime-picker', options);
+startBtn.addEventListener('click', () => {
+  options.start();
+});
 
-function updateClockFace({ days, hours, minutes, seconds }) {
-  dataDays.textContent = addLeadingZero(`${days}`);
-  dataHours.textContent = addLeadingZero(`${hours}`);
-  dataMinutes.textContent = addLeadingZero(`${minutes}`);
-  dataSeconds.textContent = addLeadingZero(`${seconds}`);
-}
-
-function addLeadingZero(value) {
-  return String(value).padStart(2, '0');
+function renderDate(date) {
+  for (const key in date) {
+    if (key) {
+      document.querySelector(`span[data-${key}]`).textContent = addLeadingZero(
+        date[`${key}`]
+      );
+    }
+  }
 }
 
 function convertMs(ms) {
@@ -86,3 +80,9 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
   return { days, hours, minutes, seconds };
 }
+
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
+
+flatpickr(input, options);
